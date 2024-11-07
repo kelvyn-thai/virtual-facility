@@ -46,7 +46,7 @@ export class BuildingsController {
   }
 
   async createWorkflow(buildingId: number) {
-    const res = await axios.post('http://localhost:3001/workflows', {
+    const res = await axios.post('http://workflows-service:3001/workflows', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

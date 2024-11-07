@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  workflows-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=workflows-service
+    command: npm run start:dev -- workflows-service
+    ports:
+      - 3001:3001 # Map port with service is listening to docker container port
+    environment:
+      - MYSQL_HOST=workflows-db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=partner_data
+      - MYSQL_DATABASE=workflows
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./node_modules:/usr/src/app/node_modules
+      - ./apps/workflows-service:/usr/src/app/apps/workflows-service
+    depends_on:
+      - workflows-db
+
+  workflows-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=partner_data
+      - MYSQL_DATABASE=workflows
+
+  virtual-facility:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=virtual-facility
+    command: npm run start:dev -- virtual-facility
+    ports:
+      - 3000:3000 # Map port with service is listening to docker container port
+    environment:
+      - MYSQL_HOST=virtual-facility-db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=partner_data
+      - MYSQL_DATABASE=virtual-facility
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./node_modules:/usr/src/app/node_modules
+      - ./apps/virtual-facility:/usr/src/app/apps/virtual-facility
+    depends_on:
+      - virtual-facility-db
+      - workflows-service
+
+  virtual-facility-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=partner_data
+      - MYSQL_DATABASE=virtual-facility
+      - MYSQL_PASSWORD=partner_data
