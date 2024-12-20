@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { BuildingsService } from './buildings.service';
 import { CreateBuildingDto } from './dto/create-building.dto';
@@ -41,6 +43,7 @@ export class BuildingsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.CREATED)
   remove(@Param('id') id: string) {
     return this.buildingsService.remove(+id);
   }
