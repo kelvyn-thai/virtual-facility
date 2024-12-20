@@ -20,7 +20,6 @@ export class BuildingsController {
 
   @Post()
   async create(@Body() createBuildingDto: CreateBuildingDto) {
-    return await this.createWorkflow(1);
     return this.buildingsService.create(createBuildingDto);
   }
 
