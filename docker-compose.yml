@@ -8,14 +8,17 @@ services:
       args:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service
-    ports:
-      - 3001:3001 # Map port with service is listening to docker container port
+    # ports:
+    #   - 3001:3001 # Map port with service is listening to docker container port
     environment:
       - MYSQL_HOST=workflows-db
       - MYSQL_PORT=3306
       - MYSQL_USER=root
       - MYSQL_PASSWORD=partner_data
       - MYSQL_DATABASE=workflows
+      - NATS_URL=nats://nats:4222
+    deploy:
+      replicas: 3 # This instructs Docker Compose to start 3 instances of the "workflows-service" container
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -24,12 +27,15 @@ services:
       - ./apps/workflows-service:/usr/src/app/apps/workflows-service
     depends_on:
       - workflows-db
+      - nats
 
   workflows-db:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=partner_data
       - MYSQL_DATABASE=workflows
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=partner_data
 
   virtual-facility:
     build:
@@ -46,6 +52,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=partner_data
       - MYSQL_DATABASE=virtual-facility
+      - NATS_URL=nats://nats:4222
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -55,6 +62,7 @@ services:
     depends_on:
       - virtual-facility-db
       - workflows-service
+      - nats
 
   virtual-facility-db:
     image: mysql:8.0
@@ -62,3 +70,6 @@ services:
       - MYSQL_ROOT_PASSWORD=partner_data
       - MYSQL_DATABASE=virtual-facility
       - MYSQL_PASSWORD=partner_data
+      - MYSQL_USER=root
+  nats:
+    image: nats:2.2.2-alpine
