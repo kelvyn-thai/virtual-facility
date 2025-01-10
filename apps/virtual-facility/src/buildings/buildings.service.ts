@@ -1,5 +1,5 @@
 import { ClientProxy } from '@nestjs/microservices';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Building } from './entities/building.entity';
@@ -17,6 +17,8 @@ export class BuildingsService {
     private readonly workflowsService: ClientProxy,
   ) {}
 
+  private readonly logger = new Logger(BuildingsService.name);
+
   async findAll(): Promise<Building[]> {
     return this.buildingsRepository.find();
   }
@@ -33,10 +35,16 @@ export class BuildingsService {
     const building = this.buildingsRepository.create({
       ...createBuildingDto,
     });
+
+    this.logger.debug('building', building);
+
     const newBuildingEntity = await this.buildingsRepository.save(building);
+
+    this.logger.debug({ newBuildingEntity });
 
     // Create a workflow for the new building
     await this.createWorkflow(newBuildingEntity.id);
+
     return newBuildingEntity;
   }
 
@@ -67,6 +75,7 @@ export class BuildingsService {
         buildingId,
       }),
     );
+    this.logger.debug('newWorkflow created', { newWorkflow });
     return newWorkflow;
   }
 }

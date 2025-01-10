@@ -46,15 +46,4 @@ export class BuildingsController {
   remove(@Param('id') id: string) {
     return this.buildingsService.remove(+id);
   }
-
-  async createWorkflow(buildingId: number) {
-    const res = await axios.post('http://workflows-service:3001/workflows', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify({ name: 'My Workflow', buildingId }),
-    });
-    return res.data;
-  }
 }

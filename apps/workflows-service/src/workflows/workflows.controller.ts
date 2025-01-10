@@ -1,4 +1,12 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+} from '@nestjs/common';
 import { CreateWorkflowDto, UpdateWorkflowDto } from '@app/workflows';
 import { WorkflowsService } from './workflows.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
@@ -7,8 +15,14 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 export class WorkflowsController {
   constructor(private readonly workflowsService: WorkflowsService) {}
 
+  private readonly logger = new Logger(WorkflowsController.name);
+
   @MessagePattern('workflows.create')
   create(@Payload() createWorkflowDto: CreateWorkflowDto) {
+    this.logger.debug('workflows.created message pattern', {
+      createWorkflowDto,
+    });
+
     return this.workflowsService.create(createWorkflowDto);
   }
 

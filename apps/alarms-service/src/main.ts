@@ -1,22 +1,24 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AlarmsServiceModule } from './alarms-service.module';
 import { ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AlarmsServiceModule);
   app.useGlobalPipes(new ValidationPipe());
   app.connectMicroservice<MicroserviceOptions>(
     {
-      transport: Transport.RMQ,
+      transport: Transport.NATS,
       options: {
-        urls: [process.env.RABBITMQ_URL],
+        servers: process.env.NATS_URL,
+        queue: 'alarms-service',
       },
     },
     {
       inheritAppConfig: true,
     },
   );
-  await app.listen(3000);
+  await app.startAllMicroservices();
+  await app.listen(process.env.port ?? 3000);
 }
 bootstrap();

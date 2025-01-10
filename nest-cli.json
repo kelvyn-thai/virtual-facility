@@ -36,6 +36,51 @@
       "compilerOptions": {
         "tsConfigPath": "libs/workflows/tsconfig.lib.json"
       }
+    },
+    "alarms-service": {
+      "type": "application",
+      "root": "apps/alarms-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/alarms-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/alarms-service/tsconfig.app.json"
+      }
+    },
+    "alarams-generator": {
+      "type": "application",
+      "root": "apps/alarams-generator",
+      "entryFile": "main",
+      "sourceRoot": "apps/alarams-generator/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/alarams-generator/tsconfig.app.json"
+      }
+    },
+    "alarms-generator": {
+      "type": "application",
+      "root": "apps/alarms-generator",
+      "entryFile": "main",
+      "sourceRoot": "apps/alarms-generator/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/alarms-generator/tsconfig.app.json"
+      }
+    },
+    "alarms-classifier-service": {
+      "type": "application",
+      "root": "apps/alarms-classifier-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/alarms-classifier-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/alarms-classifier-service/tsconfig.app.json"
+      }
+    },
+    "notification-service": {
+      "type": "application",
+      "root": "apps/notification-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-service/tsconfig.app.json"
+      }
     }
   }
 }

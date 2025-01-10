@@ -10,11 +10,19 @@ import { WORKFLOW_SERVICE } from '../constants';
   imports: [
     TypeOrmModule.forFeature([Building]),
     ClientsModule.register([
+      // {
+      //   name: WORKFLOW_SERVICE,
+      //   transport: Transport.NATS,
+      //   options: {
+      //     servers: process.env.NATS_URL,
+      //   },
+      // },
       {
         name: WORKFLOW_SERVICE,
-        transport: Transport.NATS,
+        transport: Transport.RMQ,
         options: {
-          servers: process.env.NATS_URL,
+          urls: [process.env.RABBITMQ_URL],
+          queue: 'workflows-service',
         },
       },
     ]),

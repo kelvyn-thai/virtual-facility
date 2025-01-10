@@ -7,10 +7,17 @@ async function bootstrap() {
   const app = await NestFactory.create(WorkflowsServiceModule);
   app.useGlobalPipes(new ValidationPipe());
   app.connectMicroservice<MicroserviceOptions>(
+    // {
+    //   transport: Transport.NATS,
+    //   options: {
+    //     servers: process.env.NATS_URL,
+    //     queue: 'workflows-service',
+    //   },
+    // },
     {
-      transport: Transport.NATS,
+      transport: Transport.RMQ,
       options: {
-        servers: process.env.NATS_URL,
+        urls: [process.env.RABBITMQ_URL],
         queue: 'workflows-service',
       },
     },
