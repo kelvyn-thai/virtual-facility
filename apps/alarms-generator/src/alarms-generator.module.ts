@@ -13,6 +13,7 @@ import { ALARMS_SERVICE } from './constant';
         transport: Transport.NATS,
         options: {
           servers: process.env.NATS_URL,
+          queue: 'alarms-service-queue',
         },
       },
     ]),

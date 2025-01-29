@@ -12,7 +12,7 @@ export class AlarmsGeneratorService {
 
   private readonly logger = new Logger(AlarmsGeneratorService.name);
 
-  @Interval(10000 * 1)
+  @Interval(20000 * 1)
   generateAlarm() {
     const alarmCreatedEvent = {
       name: `Alarm # ${Math.floor(Math.random() * 1000) + 1}`,

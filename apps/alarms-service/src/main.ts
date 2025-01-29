@@ -11,14 +11,19 @@ async function bootstrap() {
       transport: Transport.NATS,
       options: {
         servers: process.env.NATS_URL,
-        queue: 'alarms-service',
+        queue: 'alarms-service-queue',
       },
     },
     {
       inheritAppConfig: true,
     },
   );
-  await app.startAllMicroservices();
+  try {
+    await app.startAllMicroservices();
+  } catch (error) {
+    console.debug({ error });
+  }
+  console.log('Started alarms service');
   await app.listen(process.env.port ?? 3000);
 }
 bootstrap();

@@ -13,8 +13,8 @@ services:
     environment:
       - MYSQL_HOST=workflows-db
       - MYSQL_PORT=3306
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=partner_data
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=123456
       - MYSQL_DATABASE=workflows
       - NATS_URL=nats://nats:4222
       - RABBITMQ_URL=amqp://rabbitmq:5672
@@ -34,10 +34,10 @@ services:
   workflows-db:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=partner_data
+      - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_DATABASE=workflows
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=partner_data
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=123456
 
   virtual-facility:
     build:
@@ -51,8 +51,8 @@ services:
     environment:
       - MYSQL_HOST=virtual-facility-db
       - MYSQL_PORT=3306
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=partner_data
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=123456
       - MYSQL_DATABASE=virtual-facility
       - NATS_URL=nats://nats:4222
       - RABBITMQ_URL=amqp://rabbitmq:5672
@@ -72,12 +72,13 @@ services:
   virtual-facility-db:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=partner_data
+      - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_DATABASE=virtual-facility
-      - MYSQL_PASSWORD=partner_data
-      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456
+      - MYSQL_USER=user
   nats:
     image: nats:2.2.2-alpine
+
   alarms-service:
     build:
       context: .
@@ -85,8 +86,13 @@ services:
       args:
         - APP_NAME=alarms-service
     command: npm run start:dev -- alarms-service
+    # command: node --inspect-brk=0.0.0.0:9229 -r ts-node/register apps/alarms-service/src/main.ts
+    # command: node --inspect-brk=0.0.0.0:9229 dist/apps/alarms-service/main.js
     environment:
       - NATS_URL=nats://nats:4222
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    ports:
+      - 9229:9229 # Map debugger port from container to host
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -95,6 +101,7 @@ services:
       - ./apps/alarms-service:/usr/src/app/apps/alarms-service
     depends_on:
       - nats
+      - rabbitmq
   alarms-generator:
     build:
       context: .
@@ -102,8 +109,13 @@ services:
       args:
         - APP_NAME=alarms-generator
     command: npm run start:dev -- alarms-generator
+    # command: node --inspect-brk=0.0.0.0:9222 -r ts-node/register apps/alarms-generator/src/main.ts
+    # command: node --inspect-brk=0.0.0.0:9222 dist/apps/alarms-generator/main.js
+    ports:
+      - 9222:9222
     environment:
       - NATS_URL=nats://nats:4222
+      - RABBITMQ_URL=amqp://rabbitmq:5672
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -112,6 +124,7 @@ services:
       - ./apps/alarms-generator:/usr/src/app/apps/alarms-generator
     depends_on:
       - nats
+      - rabbitmq
   alarms-classifier-service:
     build:
       context: .
@@ -138,6 +151,7 @@ services:
     command: npm run start:dev -- notification-service
     environment:
       - NATS_URL=nats://nats:4222
+      - RABBITMQ_URL=amqp://rabbitmq:5672
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -146,6 +160,7 @@ services:
       - ./apps/notification-service:/usr/src/app/apps/notification-service
     depends_on:
       - nats
+      - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3-management
